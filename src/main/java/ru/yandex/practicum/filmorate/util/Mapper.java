@@ -41,6 +41,13 @@ public class Mapper {
         return new Mpa(rs.getInt("id"), rs.getString("rating"));
     }
 
+    public static final Director mapRowToDirector(ResultSet rs, int rowNum) throws SQLException {
+        return Director.builder()
+                .id(rs.getLong("id"))
+                .name(rs.getString("name"))
+                .build();
+    }
+
     public static final Map<String, Object> userToMap(User user) {
         return new HashMap<>() {{
             put("id", user.getId());
@@ -59,6 +66,13 @@ public class Mapper {
             put("release_date", film.getReleaseDate());
             put("duration", film.getDuration());
             put("rating_id", film.getMpa().getId());
+        }};
+    }
+
+    public static final Map<String, Object> directorToMap(Director director) {
+        return new HashMap<>() {{
+            put("id", director.getId());
+            put("name", director.getName());
         }};
     }
 }
