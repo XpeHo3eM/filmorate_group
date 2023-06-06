@@ -9,6 +9,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Mapper {
+    private Mapper() {
+    }
+
     public static final User mapRowToUser(ResultSet rs, int rowNum) throws SQLException {
         return User.builder()
                 .id(rs.getLong("id"))
