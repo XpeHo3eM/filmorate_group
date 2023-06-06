@@ -95,10 +95,10 @@ public class ReviewsController {
 
     @GetMapping("/{filmId}") //GET /reviews?filmId={filmId}&count={count}
     @ResponseStatus(HttpStatus.OK)
-    public List<Review> getReviewsByFilm(@RequestParam(defaultValue = "10", required = false) int count,
+    public List<Review> getReviewsByFilm(@PathVariable("filmId") long filmId,
+                                         @RequestParam(defaultValue = "10", required = false) int count,
                                          HttpServletRequest request) {
         log.debug("On URL [{}] used method [{}]", request.getRequestURL(), request.getMethod());
-        return service.getReviewsByFilm(count);
+        return service.getReviewsByFilm(filmId, count);
     }
-
 }
