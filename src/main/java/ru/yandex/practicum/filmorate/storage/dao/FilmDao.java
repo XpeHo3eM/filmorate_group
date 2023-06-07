@@ -142,9 +142,6 @@ public class FilmDao implements FilmStorage {
             "ORDER BY f.id;";
 
         List<Film> films = jdbcTemplate.query(sqlQuery, Mapper::mapRowToFilm, fromUserId, forUserId);
-        if (films.size() == 0) {
-            return films;
-        }
         for (Film film: films) {
             film.setGenres(getFilmGenres(film.getId()));
             film.setUsersLikes(getFilmLikes(film.getId()));

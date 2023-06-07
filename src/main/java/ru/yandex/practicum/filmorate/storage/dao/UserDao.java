@@ -144,11 +144,10 @@ public class UserDao implements UserStorage {
             + "GROUP BY user_id "
             + "ORDER BY COUNT(*) DESC "
             + "LIMIT 1;";
-        Long foundId = null;
         try {
-            foundId = jdbcTemplate.queryForObject(sql, Long.class, id, id);
+             return jdbcTemplate.queryForObject(sql, Long.class, id, id);
         } catch (DataAccessException ignore) {
+            return null;
         }
-        return foundId;
     }
 }
