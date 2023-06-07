@@ -295,6 +295,35 @@ public class FilmDao implements FilmStorage {
 //        });
     }
 
+    private void fillFilmsInfo(List<Film> films) {
+        Map<Long, Film> filmsMap = films.stream()
+                .collect(Collectors.toMap(Film::getId, Function.identity()));
+
+        Map<String, Genre> genresEntity = GenreDao.getGenreNameToGenreMap();
+
+        getFilmGenres().forEach(row -> {
+            Film film = filmsMap.get(Long.parseLong(row.get("film_id").toString()));
+
+            if (film != null) {
+                film.getGenres().add(genresEntity.get(row.get("genre").toString()));
+            }
+        });
+        getFilmLikes().forEach(row -> {
+            Film film = filmsMap.get(Long.parseLong(row.get("film_id").toString()));
+
+            if (film != null) {
+                film.getUsersLikes().add(Long.parseLong(row.get("user_id").toString()));
+            }
+        });
+        getFilmDirectors().forEach(row -> {
+            Film film = filmsMap.get(Long.parseLong(row.get("film_id").toString()));
+
+            if (film != null) {
+                film.getDirectors().add(directorStorage.getDirectorById(Long.parseLong(row.get("director_id").toString())));
+            }
+        });
+    }
+
     private void addFilmGenres(Film film) {
         String sqlQuery = "INSERT INTO film_genres(film_id, genre_id)\n" +
                 "VALUES(?, ?);";
