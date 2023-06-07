@@ -55,4 +55,9 @@ public class FilmController {
     public List<Film> getPopulated(@RequestParam(required = false) Integer count) {
         return service.getPopulated(count);
     }
+
+    @GetMapping("/search")
+    public List<Film> searchFilm(@RequestParam String query, @RequestParam("by") List<String> searchBy) {
+        return service.searchFilm(query, searchBy);
+    }
 }

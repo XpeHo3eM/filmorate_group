@@ -18,4 +18,6 @@ public interface FilmService {
     Film addFilm(Film film);
 
     Film updateFilm(Film film);
+
+    List<Film> searchFilm(String query, List<String> searchBy);
 }

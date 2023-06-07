@@ -12,6 +12,7 @@ import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 import ru.yandex.practicum.filmorate.validator.FilmValidator;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -64,9 +65,10 @@ public class FilmServiceImpl implements FilmService {
         int maxFilms = filmsCount != null ? filmsCount : DEFAULT_FILMS_COUNT;
         final List<Film> films = filmStorage.getAllFilms();
 
-        return films.stream().sorted((f1, f2) -> {
-            return f2.getUsersLikes().size() - f1.getUsersLikes().size();
-        }).limit(maxFilms).collect(Collectors.toList());
+        return films.stream()
+                .sorted((f1, f2) -> f2.getUsersLikes().size() - f1.getUsersLikes().size())
+                .limit(maxFilms)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -103,6 +105,33 @@ public class FilmServiceImpl implements FilmService {
         }
 
         return filmOnDb;
+    }
+
+    @Override
+    public List<Film> searchFilm(String query, List<String> searchBy) {
+        List<Film> filmsOnDb = filmStorage.searchFilm(query, searchBy);
+
+        if (filmsOnDb.isEmpty()) {
+            StringBuilder sb = new StringBuilder(String.format("Фильмы с подстрокой '%s' ", query));
+
+            Set<String> searchBySet = new HashSet<>(searchBy);
+
+            if (searchBySet.contains("director") && searchBySet.contains("title")) {
+                sb.append("в названии фильма или имени режиссера");
+            } else if (searchBySet.contains("director")) {
+                sb.append("в имени режиссера");
+            } else if (searchBySet.contains("title")) {
+                sb.append("в названии фильма");
+            }
+
+            sb.append(" не найдены");
+
+            throw new EntityNotFoundException(sb.toString());
+        }
+
+        return filmsOnDb.stream()
+                .sorted((f1, f2) -> f2.getUsersLikes().size() - f1.getUsersLikes().size())
+                .collect(Collectors.toList());
     }
 
     private User getUserOrThrowException(Long id) {
