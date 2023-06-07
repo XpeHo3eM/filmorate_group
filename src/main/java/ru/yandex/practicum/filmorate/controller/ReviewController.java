@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Review;
-import ru.yandex.practicum.filmorate.service.ReviewsService;
+import ru.yandex.practicum.filmorate.service.ReviewService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -15,8 +15,8 @@ import java.util.List;
 @RestController
 @RequestMapping("/reviews")
 @RequiredArgsConstructor
-public class ReviewsController {
-    private final ReviewsService service;
+public class ReviewController {
+    private final ReviewService service;
 
     @PostMapping //POST /reviews
     @ResponseStatus(HttpStatus.CREATED)
