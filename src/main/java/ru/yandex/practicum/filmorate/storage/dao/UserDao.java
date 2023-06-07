@@ -117,4 +117,38 @@ public class UserDao implements UserStorage {
 
         return getFriends(fromId);
     }
+
+    @Override
+    public Long getLikesCount(Long id) {
+        String sql = "SELECT count(*) "
+            + "FROM film_users_likes "
+            + "WHERE user_id = ?;";
+        Long likesCount = null;
+        try {
+            likesCount = jdbcTemplate.queryForObject(sql, Long.class, id);
+        } catch (DataAccessException ignore) {
+        }
+        return likesCount == null ? 0 : likesCount;
+    }
+
+    @Override
+    public Long getUserIdWithMostCommonLikes(Long id) {
+        String sql = "SELECT user_id "
+            + "FROM film_users_likes "
+            + "WHERE film_id IN ( "
+            + "    SELECT film_id "
+            + "    FROM film_users_likes "
+            + "    WHERE user_id = ? "
+            + ") "
+            + "AND user_id != ? "
+            + "GROUP BY user_id "
+            + "ORDER BY COUNT(*) DESC "
+            + "LIMIT 1;";
+        Long foundId = null;
+        try {
+            foundId = jdbcTemplate.queryForObject(sql, Long.class, id, id);
+        } catch (DataAccessException ignore) {
+        }
+        return foundId;
+    }
 }

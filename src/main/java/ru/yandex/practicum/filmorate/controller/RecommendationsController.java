@@ -25,10 +25,11 @@ public class RecommendationsController {
     @GetMapping("/users/{id}/recommendations")
     public List<Film> getRecommended(@PathVariable Long id) {
         User user = userService.getUserById(id);
+
         if (user == null) {
             throw new EntityNotFoundException("Пользователь не найден.");
         }
-        return recommendationsService.getRecommended(id);
 
+        return recommendationsService.getRecommended(id);
     }
 }
