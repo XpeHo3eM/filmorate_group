@@ -12,6 +12,7 @@ import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 import ru.yandex.practicum.filmorate.validator.FilmValidator;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -64,9 +65,10 @@ public class FilmServiceImpl implements FilmService {
         int maxFilms = filmsCount != null ? filmsCount : DEFAULT_FILMS_COUNT;
         final List<Film> films = filmStorage.getAllFilms();
 
-        return films.stream().sorted((f1, f2) -> {
-            return f2.getUsersLikes().size() - f1.getUsersLikes().size();
-        }).limit(maxFilms).collect(Collectors.toList());
+        return films.stream()
+                .sorted((f1, f2) -> f2.getUsersLikes().size() - f1.getUsersLikes().size())
+                .limit(maxFilms)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -103,6 +105,29 @@ public class FilmServiceImpl implements FilmService {
         }
 
         return filmOnDb;
+    }
+
+    @Override
+    public List<Film> getDirectorFilms(Long directorId, String sortBy) {
+        List<Film> filmsOnDb = filmStorage.getAllFilmsByDirector(directorId);
+
+        if (filmsOnDb.isEmpty()) {
+            throw new EntityNotFoundException(String.format("Режиссер с ID = %s не найден", directorId));
+        }
+
+        List<Film> result = filmsOnDb;
+
+        if ("year".equals(sortBy)) {
+            result = filmsOnDb.stream()
+                    .sorted(Comparator.comparingInt(f -> f.getReleaseDate().getYear()))
+                    .collect(Collectors.toList());
+        } else if ("likes".equals(sortBy)) {
+            result = filmsOnDb.stream()
+                    .sorted(Comparator.comparingInt(f -> f.getUsersLikes().size()))
+                    .collect(Collectors.toList());
+        }
+
+        return result;
     }
 
     private User getUserOrThrowException(Long id) {
