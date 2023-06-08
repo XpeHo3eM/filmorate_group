@@ -27,7 +27,7 @@ public class ReviewController {
         return service.addReview(review);
     }
 
-    @PostMapping
+    @PutMapping
     @ResponseStatus(HttpStatus.OK)
     public Review updateReview(@Valid @RequestBody Review review,
                                HttpServletRequest request) {
