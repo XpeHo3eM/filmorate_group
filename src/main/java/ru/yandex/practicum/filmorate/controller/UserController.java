@@ -65,7 +65,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}/recommendations")
-    public List<Film> getRecommended(@PathVariable Long id) {
+    public List<Film> getRecommended(@PathVariable long id) {
         User user = service.getUserById(id);
 
         if (user == null) {

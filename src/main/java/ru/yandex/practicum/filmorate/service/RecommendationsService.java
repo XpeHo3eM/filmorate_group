@@ -5,5 +5,5 @@ import ru.yandex.practicum.filmorate.model.Film;
 import java.util.List;
 
 public interface RecommendationsService {
-    List<Film> getRecommended(Long userId);
+    List<Film> getRecommended(long userId);
 }

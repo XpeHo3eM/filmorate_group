@@ -20,15 +20,17 @@ public class RecommendationsServiceImpl implements RecommendationsService {
     }
 
     @Override
-    public List<Film> getRecommended(Long userId) {
+    public List<Film> getRecommended(long userId) {
         Long likesCount = userStorage.getLikesCount(userId);
         if (likesCount == null || likesCount == 0) {
             return new ArrayList<>();
         }
+
         Long foundId = userStorage.getUserIdWithMostCommonLikes(userId);
         if (foundId == null) {
             return new ArrayList<>();
         }
+
         return filmStorage.getRecommendations(userId, foundId);
     }
 }
