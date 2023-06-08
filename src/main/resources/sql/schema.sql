@@ -49,7 +49,7 @@ CREATE TABLE IF NOT EXISTS film_reviews (
     is_positive boolean    NOT NULL,
     user_id     bigint     NOT NULL REFERENCES users(id) ON DELETE CASCADE,
 	film_id     bigint     NOT NULL REFERENCES films(id) ON DELETE CASCADE,
-    duration    int        NOT NULL
+    useful      int        DEFAULT '0'
 );
 
 

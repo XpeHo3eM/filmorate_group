@@ -1,10 +1,14 @@
 package ru.yandex.practicum.filmorate.storage.dao;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import ru.yandex.practicum.filmorate.model.Review;
 import ru.yandex.practicum.filmorate.storage.ReviewStorage;
+import ru.yandex.practicum.filmorate.util.Mapper;
 
 import java.util.Collections;
 import java.util.List;
@@ -16,8 +20,14 @@ public class ReviewDao implements ReviewStorage {
     private final JdbcTemplate jdbcTemplate;
 
     @Override
+    @Transactional
     public Optional<Review> addReview(Review review) {
-        return Optional.empty();
+        long reviewId = new SimpleJdbcInsert(jdbcTemplate)
+                .withTableName("film_reviews")
+                .usingGeneratedKeyColumns("reviewId")
+                .executeAndReturnKey(Mapper.reviewToMap(review)).longValue();
+
+        return findReviewById(reviewId);
     }
 
     @Override
@@ -27,7 +37,15 @@ public class ReviewDao implements ReviewStorage {
 
     @Override
     public Optional<Review> findReviewById(long reviewId) {
-        return Optional.empty();
+        String sqlQuery = "SELECT *\n" +
+                "FROM film_reviews\n" +
+                "WHERE reviewId = ?;";
+
+        try {
+            return Optional.ofNullable(jdbcTemplate.queryForObject(sqlQuery, Mapper::mapRowToReview, reviewId));
+        } catch (DataAccessException e) {
+            return Optional.empty();
+        }
     }
 
     @Override

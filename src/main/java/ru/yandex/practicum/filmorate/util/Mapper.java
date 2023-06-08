@@ -64,4 +64,25 @@ public class Mapper {
             put("rating_id", film.getMpa().getId());
         }};
     }
+
+    public static final Map<String, Object> reviewToMap(Review review) {
+        return new HashMap<>() {{
+            put("reviewId", review.getReviewId());
+            put("content", review.getContent());
+            put("is_positive", review.isPositive());
+            put("user_id", review.getUserId());
+            put("film_id", review.getFilmId());
+        }};
+    }
+
+    public static final Review mapRowToReview(ResultSet rs, int rowNum) throws SQLException {
+        return Review.builder()
+                .reviewId(rs.getLong("reviewId"))
+                .content(rs.getString("content"))
+                .isPositive(rs.getBoolean("is_positive"))
+                .userId(rs.getLong("user_id"))
+                .filmId(rs.getLong("film_id"))
+                .useful(rs.getLong("useful"))
+                .build();
+    }
 }
