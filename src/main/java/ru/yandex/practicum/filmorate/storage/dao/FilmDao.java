@@ -119,6 +119,38 @@ public class FilmDao implements FilmStorage {
         return getFilmById(film.getId());
     }
 
+    @Override
+    @Transactional
+    public List<Film> commonAndPopularFilm(Long userId, Long friendId) {
+        String sqlQuery = "SELECT *, r.rating\n" +
+                "FROM films AS f\n" +
+                "JOIN mpas AS r ON f.rating_id = r.id\n" +
+                "WHERE f.id IN (SELECT film_id FROM film_users_likes WHERE user_id = ?)\n" +
+                "INTERSECT\n" +
+                "SELECT *, r.rating\n" +
+                "FROM films AS f\n" +
+                "JOIN mpas AS r ON f.rating_id = r.id " +
+                "WHERE f.id in (SELECT film_id FROM film_users_likes WHERE user_id = ?) ";
+
+        List<Film> films = jdbcTemplate.query(sqlQuery, Mapper::mapRowToFilm, userId, friendId);
+        Map<Long, Film> filmMap = films.stream().collect(Collectors.toMap(Film::getId, f -> f));
+
+        try {
+            Map<String, Genre> genresEntity = GenreDao.getGenreNameToGenreMap();
+            getFilmGenres().forEach(row -> {
+                filmMap.get(Long.parseLong(row.get("film_id").toString())).getGenres()
+                        .add(genresEntity.get(row.get("genre").toString()));
+            });
+            getFilmLikes().forEach(row -> {
+                filmMap.get(Long.parseLong(row.get("film_id").toString())).getUsersLikes()
+                        .add(Long.parseLong(row.get("user_id").toString()));
+            });
+        } catch (NullPointerException e) {
+            return films;
+        }
+        return films;
+    }
+
     private void addFilmGenres(Film film) {
         String sqlQuery = "INSERT INTO film_genres(film_id, genre_id)\n" +
                 "VALUES(?, ?);";

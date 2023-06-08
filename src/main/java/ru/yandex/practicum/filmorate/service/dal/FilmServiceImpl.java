@@ -105,6 +105,11 @@ public class FilmServiceImpl implements FilmService {
         return filmOnDb;
     }
 
+    @Override
+    public List<Film> commonAndPopularFilm(Long userId, Long friendId) {
+        return filmStorage.commonAndPopularFilm(userId, friendId);
+    }
+
     private User getUserOrThrowException(Long id) {
         User userOnDb = userStorage.getUserById(id);
 

@@ -12,4 +12,6 @@ public interface FilmStorage {
     Film addFilm(Film film);
 
     Film updateFilm(Film film);
+
+    List<Film> commonAndPopularFilm(Long userId, Long friendId);
 }

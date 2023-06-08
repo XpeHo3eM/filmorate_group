@@ -11,6 +11,7 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.FilmService;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.GenreStorage;
 import ru.yandex.practicum.filmorate.storage.MpaStorage;
@@ -19,9 +20,12 @@ import ru.yandex.practicum.filmorate.storage.dao.GenreDao;
 import ru.yandex.practicum.filmorate.storage.dao.MpaDao;
 
 import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
@@ -33,6 +37,7 @@ class FilmorateApplicationTests {
     private final MpaStorage mpaStorage;
     private final UserStorage userStorage;
     private final FilmStorage filmStorage;
+    private final FilmService filmService;
 
     private static Film film1;
     private static Film film2;
@@ -207,5 +212,22 @@ class FilmorateApplicationTests {
 
         assertTrue(userStorage.removeFriend(1L, 2L).isEmpty(),
                 "Не удалился друг");
+    }
+
+    @Test
+    public void commonAndPopularFilm() {
+        film1 = filmStorage.addFilm(film1);
+        film2 = filmStorage.addFilm(film2);
+        user1 = userStorage.addUser(user1);
+        user2 = userStorage.addUser(user2);
+
+        filmService.addLike(film1.getId(), user1.getId());
+        filmService.addLike(film1.getId(), user2.getId());
+        filmService.addLike(film2.getId(), user1.getId());
+        filmService.addLike(film2.getId(), user2.getId());
+
+        assertEquals(filmStorage.commonAndPopularFilm(user1.getId(), user2.getId()).size(), 2);
+        filmService.removeLike(film2.getId(), user2.getId());
+        assertEquals(filmStorage.commonAndPopularFilm(user1.getId(), user2.getId()).size(), 1);
     }
 }
