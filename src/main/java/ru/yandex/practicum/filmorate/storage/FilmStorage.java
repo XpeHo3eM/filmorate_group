@@ -14,4 +14,6 @@ public interface FilmStorage {
     Film addFilm(Film film);
 
     Film updateFilm(Film film);
+
+    List<Film> getRecommendations(Long forUserId, Long fromUserId);
 }

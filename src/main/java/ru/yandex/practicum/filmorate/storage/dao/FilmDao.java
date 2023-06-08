@@ -137,6 +137,38 @@ public class FilmDao implements FilmStorage {
         return getFilmById(film.getId());
     }
 
+
+    @Override
+    public List<Film> getRecommendations(Long forUserId, Long fromUserId) {
+
+        String sqlQuery = "SELECT f.id,\n" +
+            "\tf.name,\n" +
+            "\tf.description,\n" +
+            "\tf.release_date,\n" +
+            "\tf.duration,\n" +
+            "\tr.rating\n" +
+            "FROM films AS f\n" +
+            "JOIN mpas AS r ON f.rating_id = r.id\n" +
+            "WHERE f.id in (" +
+                "SELECT film_id "
+                + "FROM film_users_likes "
+                + "WHERE user_id = ? "
+                + "AND film_id not in ( "
+                + "    SELECT film_id "
+                + "    FROM film_users_likes "
+                + "    WHERE user_id = ? "
+                + ")) " +
+            "ORDER BY f.id;";
+
+        List<Film> films = jdbcTemplate.query(sqlQuery, Mapper::mapRowToFilm, fromUserId, forUserId);
+        for (Film film: films) {
+            film.setGenres(getFilmGenres(film.getId()));
+            film.setUsersLikes(getFilmLikes(film.getId()));
+        }
+
+        return films;
+    }
+
     private void fillFilmsInfo(List<Film> films) {
         Map<Long, Film> filmsMap = films.stream()
                 .collect(Collectors.toMap(Film::getId, Function.identity()));
