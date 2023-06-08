@@ -62,7 +62,7 @@ public class FilmController {
     }
 
     @GetMapping("/search")
-    public List<Film> searchFilm(@RequestParam String query, @RequestParam("by") List<String> searchBy) {
-        return service.searchFilm(query, searchBy);
+    public List<Film> searchFilm(@RequestParam String query, @RequestParam("by") Optional<List<String>> searchBy) {
+        return service.searchFilm(query, searchBy.orElse(new ArrayList<>()));
     }
 }
