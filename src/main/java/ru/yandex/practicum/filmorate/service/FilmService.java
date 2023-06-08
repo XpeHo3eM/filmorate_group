@@ -19,6 +19,8 @@ public interface FilmService {
 
     Film updateFilm(Film film);
 
+    List<Film> commonAndPopularFilm(Long userId, Long friendId);
+
     List<Film> getDirectorFilms(Long directorId, String sortBy);
 
     List<Film> commonAndPopularFilm(Long userId, Long friendId);

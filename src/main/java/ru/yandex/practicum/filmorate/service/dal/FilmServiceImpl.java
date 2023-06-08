@@ -108,6 +108,11 @@ public class FilmServiceImpl implements FilmService {
     }
 
     @Override
+    public List<Film> commonAndPopularFilm(Long userId, Long friendId) {
+        return filmStorage.commonAndPopularFilm(userId, friendId);
+    }
+
+    @Override
     public List<Film> getDirectorFilms(Long directorId, String sortBy) {
         List<Film> filmsOnDb = filmStorage.getAllFilmsByDirector(directorId);
 
