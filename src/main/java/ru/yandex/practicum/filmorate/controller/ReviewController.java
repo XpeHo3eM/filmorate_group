@@ -18,87 +18,97 @@ import java.util.List;
 public class ReviewController {
     private final ReviewService service;
 
-    @PostMapping //POST /reviews
-    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping
+    @ResponseStatus(HttpStatus.OK)
     public Review addReview(@Valid @RequestBody Review review,
                             HttpServletRequest request) {
         log.debug("On URL [{}] used method [{}]", request.getRequestURL(), request.getMethod());
+
         return service.addReview(review);
     }
 
-    @PostMapping //PUT /reviews
+    @PostMapping
     @ResponseStatus(HttpStatus.OK)
     public Review updateReview(@Valid @RequestBody Review review,
                                HttpServletRequest request) {
         log.debug("On URL [{}] used method [{}]", request.getRequestURL(), request.getMethod());
+
         return service.updateReview(review);
     }
 
-    @GetMapping("/{reviewId}") //GET /reviews/{id}
+    @GetMapping("/{reviewId}")
     @ResponseStatus(HttpStatus.OK)
     public Review getReview(@PathVariable("reviewId") long reviewId,
                             HttpServletRequest request) {
         log.debug("On URL [{}] used method [{}]", request.getRequestURL(), request.getMethod());
+
         return service.findReviewById(reviewId);
     }
 
-    @DeleteMapping("/{reviewId}") //DELETE /reviews/{id}
-    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @DeleteMapping("/{reviewId}")
+    @ResponseStatus(HttpStatus.OK)
     public void removeReview(@PathVariable("reviewId") long reviewId,
                              HttpServletRequest request) {
         log.debug("On URL [{}] used method [{}]", request.getRequestURL(), request.getMethod());
+
         service.removeReview(reviewId);
     }
 
-    @PutMapping("/{reviewId}/like/{userId}") //PUT /reviews/{id}/like/{userId}
-    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PutMapping("/{reviewId}/like/{userId}")
+    @ResponseStatus(HttpStatus.OK)
     public void addLikeReview(@PathVariable("reviewId") long reviewId,
                               @PathVariable("userId") long userId,
                               HttpServletRequest request) {
         log.debug("On URL [{}] used method [{}]", request.getRequestURL(), request.getMethod());
+
         service.addLikeReview(reviewId, userId);
     }
 
-    @DeleteMapping("/{reviewId}/like/{userId}") //DELETE /reviews/{id}/like/{userId}
-    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @DeleteMapping("/{reviewId}/like/{userId}")
+    @ResponseStatus(HttpStatus.OK)
     public void removeLikeReview(@PathVariable("reviewId") long reviewId,
                                  @PathVariable("userId") long userId,
                                  HttpServletRequest request) {
         log.debug("On URL [{}] used method [{}]", request.getRequestURL(), request.getMethod());
+
         service.removeLikeReview(reviewId, userId);
     }
 
-    @PutMapping("/{reviewId}/dislike/{userId}") //PUT /reviews/{id}/dislike/{userId}
-    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PutMapping("/{reviewId}/dislike/{userId}")
+    @ResponseStatus(HttpStatus.OK)
     public void addDislikeReview(@PathVariable("reviewId") long reviewId,
                                  @PathVariable("userId") long userId,
                                  HttpServletRequest request) {
         log.debug("On URL [{}] used method [{}]", request.getRequestURL(), request.getMethod());
+
         service.addDislikeReview(reviewId, userId);
     }
 
-    @DeleteMapping("/{reviewId}/dislike/{userId}") //DELETE /reviews/{id}/dislike/{userId}
-    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @DeleteMapping("/{reviewId}/dislike/{userId}")
+    @ResponseStatus(HttpStatus.OK)
     public void removeDislikeReview(@PathVariable("reviewId") long reviewId,
                                     @PathVariable("userId") long userId,
                                     HttpServletRequest request) {
         log.debug("On URL [{}] used method [{}]", request.getRequestURL(), request.getMethod());
+
         service.removeDislikeReview(reviewId, userId);
     }
 
-    @GetMapping //GET /reviews?count={count}
+    @GetMapping
     public List<Review> getReviews(@RequestParam(defaultValue = "10", required = false) int count,
                                    HttpServletRequest request) {
         log.debug("On URL [{}] used method [{}]", request.getRequestURL(), request.getMethod());
+
         return service.getReviews(count);
     }
 
-    @GetMapping("/{filmId}") //GET /reviews?filmId={filmId}&count={count}
+    @GetMapping("/{filmId}")
     @ResponseStatus(HttpStatus.OK)
     public List<Review> getReviewsByFilm(@PathVariable("filmId") long filmId,
                                          @RequestParam(defaultValue = "10", required = false) int count,
                                          HttpServletRequest request) {
         log.debug("On URL [{}] used method [{}]", request.getRequestURL(), request.getMethod());
+
         return service.getReviewsByFilm(filmId, count);
     }
 }

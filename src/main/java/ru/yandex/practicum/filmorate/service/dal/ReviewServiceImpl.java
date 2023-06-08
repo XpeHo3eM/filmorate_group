@@ -42,6 +42,7 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     public Review updateReview(Review review) {
         checkFoundUserAndFilm(review.getUserId(), review.getFilmId());
+
         Review checkFoundReview = findReviewById(review.getReviewId());
 
         if (review.equals(checkFoundReview)) {
