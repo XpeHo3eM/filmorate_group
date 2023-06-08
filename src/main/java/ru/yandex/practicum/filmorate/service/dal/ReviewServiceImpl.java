@@ -27,6 +27,7 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     public Review addReview(Review review) {
         checkFoundUserAndFilm(review.getUserId(), review.getFilmId());
+
         Optional<Review> newReview = reviewStorage.addReview(review);
 
         if (newReview.isPresent()) {
@@ -34,6 +35,7 @@ public class ReviewServiceImpl implements ReviewService {
         } else {
             throw new ReviewNotCreatedException(String.format("Новый отзыв не добавлен: [%s]", review));
         }
+
         return newReview.get();
     }
 
@@ -55,6 +57,7 @@ public class ReviewServiceImpl implements ReviewService {
         } else {
             throw new ReviewNotUpdatedException(String.format("Отзыв не обновлен: [%s]", review));
         }
+
         return updateReview.get();
     }
 
@@ -67,12 +70,14 @@ public class ReviewServiceImpl implements ReviewService {
         } else {
             throw new EntityNotFoundException(String.format("Отзыв с [id = %d] не найден", reviewId));
         }
+
         return findReview.get();
     }
 
     @Override
     public void removeReview(long reviewId) {
         Review checkFoundReview = findReviewById(reviewId);
+
         if (reviewStorage.removeReview(reviewId)) {
             log.debug("Удален отзыв: [{}]", checkFoundReview);
         } else {
@@ -138,6 +143,7 @@ public class ReviewServiceImpl implements ReviewService {
             log.info("Вернулся список из [count={}] отзывов. Изначальный запрос был [count={}]",
                     listAllReviews.size(), count);
         }
+
         return getSortedListReviews(listAllReviews);
     }
 
@@ -152,6 +158,7 @@ public class ReviewServiceImpl implements ReviewService {
             log.info("Вернулся список из [count={}] отзывов к фильму [filmId = {}]. Изначальный запрос был [count={}]",
                     listReviewsByFilm.size(), filmId, count);
         }
+
         return getSortedListReviews(listReviewsByFilm);
     }
 
