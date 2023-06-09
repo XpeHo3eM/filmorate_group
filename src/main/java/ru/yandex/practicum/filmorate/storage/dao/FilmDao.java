@@ -204,22 +204,22 @@ public class FilmDao implements FilmStorage {
         List<Film> films;
         String sqlQuery = "";
 
-        if (searchBySet.contains("director") && searchBySet.contains("title")) {
+        boolean searchByDirector = searchBySet.contains("director");
+        boolean searchByTitle = searchBySet.contains("title");
+
+        if (searchByDirector && searchByTitle) {
             sqlQuery = getSqlQuerySearchByDirectorAndTitle();
-            films = jdbcTemplate.query(sqlQuery, Mapper::mapRowToFilm, query, query);
-
-            fillFilmsInfo(films);
-
-            return films;
-        }
-
-        if (searchBySet.contains("director")) {
+        } else if (searchByDirector) {
             sqlQuery = getSqlQuerySearchByDirector();
-        } else if (searchBySet.contains("title")) {
+        } else if (searchByTitle) {
             sqlQuery = getSqlQuerySearchByTitle();
         }
 
-        films = jdbcTemplate.query(sqlQuery, Mapper::mapRowToFilm, query);
+        if (searchByDirector && searchByTitle) {
+            films = jdbcTemplate.query(sqlQuery, Mapper::mapRowToFilm, query, query);
+        } else {
+            films = jdbcTemplate.query(sqlQuery, Mapper::mapRowToFilm, query);
+        }
 
         fillFilmsInfo(films);
 
