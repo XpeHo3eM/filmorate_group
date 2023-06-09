@@ -108,11 +108,6 @@ public class FilmServiceImpl implements FilmService {
     }
 
     @Override
-    public List<Film> commonAndPopularFilm(Long userId, Long friendId) {
-        return filmStorage.commonAndPopularFilm(userId, friendId);
-    }
-
-    @Override
     public List<Film> getDirectorFilms(Long directorId, String sortBy) {
         List<Film> filmsOnDb = filmStorage.getAllFilmsByDirector(directorId);
 
@@ -133,6 +128,11 @@ public class FilmServiceImpl implements FilmService {
         }
 
         return result;
+    }
+
+    @Override
+    public List<Film> commonAndPopularFilm(Long userId, Long friendId) {
+        return filmStorage.commonAndPopularFilm(userId, friendId);
     }
 
     private User getUserOrThrowException(Long id) {

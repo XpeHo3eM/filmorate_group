@@ -56,13 +56,13 @@ public class FilmController {
         return service.getPopulated(count);
     }
 
-    @GetMapping("/common")
-    public List<Film> commonAndPopularFilm(@RequestParam long userId, @RequestParam long friendId) {
-        return service.commonAndPopularFilm(userId, friendId);
-    }
-
     @GetMapping("/director/{directorId}")
     public List<Film> getDirectorFilms(@PathVariable long directorId, @RequestParam String sortBy) {
         return service.getDirectorFilms(directorId, sortBy);
+    }
+
+    @GetMapping("/common")
+    public List<Film> commonAndPopularFilm(@RequestParam long userId, @RequestParam long friendId) {
+        return service.commonAndPopularFilm(userId, friendId);
     }
 }
