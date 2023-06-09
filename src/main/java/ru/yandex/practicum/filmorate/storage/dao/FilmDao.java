@@ -139,33 +139,28 @@ public class FilmDao implements FilmStorage {
 
     @Override
     @Transactional
-    public List<Film> commonAndPopularFilm(Long userId, Long friendId) {
-        String sqlQuery = "SELECT *, r.rating\n" +
+    public List<Film> commonAndPopularFilm(long userId, long friendId) {
+        String sqlQuery = "SELECT *\n" +
                 "FROM films AS f\n" +
                 "JOIN mpas AS r ON f.rating_id = r.id\n" +
-                "WHERE f.id IN (SELECT film_id FROM film_users_likes WHERE user_id = ?)\n" +
+                "WHERE f.id IN\n" +
+                "(SELECT film_id\n" +
+                "FROM film_users_likes AS ful\n" +
+                "WHERE user_id = ?\n" +
+                "GROUP BY film_id\n" +
+                "ORDER BY COUNT(user_id))\n" +
                 "INTERSECT\n" +
-                "SELECT *, r.rating\n" +
+                "SELECT *\n" +
                 "FROM films AS f\n" +
-                "JOIN mpas AS r ON f.rating_id = r.id " +
-                "WHERE f.id in (SELECT film_id FROM film_users_likes WHERE user_id = ?) ";
+                "JOIN mpas AS r ON f.rating_id = r.id\n" +
+                "WHERE f.id IN\n" +
+                "(SELECT film_id\n" +
+                "FROM film_users_likes\n" +
+                "WHERE user_id = ?)\n";
 
         List<Film> films = jdbcTemplate.query(sqlQuery, Mapper::mapRowToFilm, userId, friendId);
-        Map<Long, Film> filmMap = films.stream().collect(Collectors.toMap(Film::getId, f -> f));
+        fillFilmsInfo(films);
 
-        try {
-            Map<String, Genre> genresEntity = GenreDao.getGenreNameToGenreMap();
-            getFilmGenres().forEach(row -> {
-                filmMap.get(Long.parseLong(row.get("film_id").toString())).getGenres()
-                        .add(genresEntity.get(row.get("genre").toString()));
-            });
-            getFilmLikes().forEach(row -> {
-                filmMap.get(Long.parseLong(row.get("film_id").toString())).getUsersLikes()
-                        .add(Long.parseLong(row.get("user_id").toString()));
-            });
-        } catch (NullPointerException e) {
-            return films;
-        }
         return films;
     }
 
