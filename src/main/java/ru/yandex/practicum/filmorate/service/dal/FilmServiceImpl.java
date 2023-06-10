@@ -6,9 +6,11 @@ import ru.yandex.practicum.filmorate.exception.entity.EntityNotFoundException;
 import ru.yandex.practicum.filmorate.exception.film.FilmAlreadyLikedException;
 import ru.yandex.practicum.filmorate.exception.film.FilmNotLikedException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.FilmService;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.GenreStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 import ru.yandex.practicum.filmorate.validator.FilmSearchValidator;
 import ru.yandex.practicum.filmorate.validator.FilmValidator;
@@ -22,10 +24,12 @@ import java.util.stream.Collectors;
 public class FilmServiceImpl implements FilmService {
     private final FilmStorage filmStorage;
     private final UserStorage userStorage;
+    private final GenreStorage genreStorage;
 
-    public FilmServiceImpl(FilmStorage filmStorage, UserStorage userStorage) {
+    public FilmServiceImpl(FilmStorage filmStorage, UserStorage userStorage, GenreStorage genreStorage) {
         this.filmStorage = filmStorage;
         this.userStorage = userStorage;
+        this.genreStorage = genreStorage;
     }
 
     @Override
@@ -61,12 +65,14 @@ public class FilmServiceImpl implements FilmService {
     }
 
     @Override
-    public List<Film> getPopulated(Integer filmsCount) {
+    public List<Film> getPopulated(Integer filmsCount, Integer genreId, Integer year) {
         final int DEFAULT_FILMS_COUNT = 10;
         int maxFilms = filmsCount != null ? filmsCount : DEFAULT_FILMS_COUNT;
-        final List<Film> films = filmStorage.getAllFilms();
+        Genre genre = genreId != null ? genreStorage.getGenre(genreId) : null;
 
-        return films.stream()
+        return filmStorage.getAllFilms().stream()
+                .filter(f -> genre == null || f.getGenres().contains(genre))
+                .filter(f -> year  == null || year.equals(f.getReleaseDate().getYear()))
                 .sorted((f1, f2) -> f2.getUsersLikes().size() - f1.getUsersLikes().size())
                 .limit(maxFilms)
                 .collect(Collectors.toList());
