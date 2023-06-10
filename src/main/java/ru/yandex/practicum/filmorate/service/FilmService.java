@@ -20,4 +20,6 @@ public interface FilmService {
     Film updateFilm(Film film);
 
     List<Film> getDirectorFilms(Long directorId, String sortBy);
+
+    List<Film> searchFilm(String query, List<String> searchBy);
 }

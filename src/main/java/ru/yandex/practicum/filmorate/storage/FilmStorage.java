@@ -15,5 +15,7 @@ public interface FilmStorage {
 
     Film updateFilm(Film film);
 
+    List<Film> searchFilm(String query, List<String> searchBy);
+
     List<Film> getRecommendations(Long forUserId, Long fromUserId);
 }

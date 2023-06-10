@@ -10,6 +10,7 @@ import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.FilmService;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
+import ru.yandex.practicum.filmorate.validator.FilmSearchValidator;
 import ru.yandex.practicum.filmorate.validator.FilmValidator;
 
 import java.util.Comparator;
@@ -128,6 +129,17 @@ public class FilmServiceImpl implements FilmService {
         }
 
         return result;
+    }
+
+    @Override
+    public List<Film> searchFilm(String query, List<String> searchBy) {
+        FilmSearchValidator.validate(searchBy);
+
+        List<Film> filmsOnDb = filmStorage.searchFilm(query, searchBy);
+
+        return filmsOnDb.stream()
+                .sorted((f1, f2) -> f2.getUsersLikes().size() - f1.getUsersLikes().size())
+                .collect(Collectors.toList());
     }
 
     private User getUserOrThrowException(Long id) {

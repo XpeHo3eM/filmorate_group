@@ -140,7 +140,6 @@ public class FilmDao implements FilmStorage {
 
     @Override
     public List<Film> getRecommendations(Long forUserId, Long fromUserId) {
-
         String sqlQuery = "SELECT f.id,\n" +
             "\tf.name,\n" +
             "\tf.description,\n" +
@@ -161,10 +160,8 @@ public class FilmDao implements FilmStorage {
             "ORDER BY f.id;";
 
         List<Film> films = jdbcTemplate.query(sqlQuery, Mapper::mapRowToFilm, fromUserId, forUserId);
-        for (Film film: films) {
-            film.setGenres(getFilmGenres(film.getId()));
-            film.setUsersLikes(getFilmLikes(film.getId()));
-        }
+
+        fillFilmsInfo(films);
 
         return films;
     }
@@ -196,6 +193,82 @@ public class FilmDao implements FilmStorage {
                 film.getDirectors().add(directorStorage.getDirectorById(Long.parseLong(row.get("director_id").toString())));
             }
         });
+    }
+
+    @Override
+    @Transactional
+    public List<Film> searchFilm(String query, List<String> searchBy) {
+        Set<String> searchBySet = new HashSet<>(searchBy);
+        query = "%" + query + "%";
+
+        List<Film> films;
+        String sqlQuery = "";
+
+        boolean searchByDirector = searchBySet.contains("director");
+        boolean searchByTitle = searchBySet.contains("title");
+
+        if (searchByDirector && searchByTitle) {
+            sqlQuery = getSqlQuerySearchByDirectorAndTitle();
+        } else if (searchByDirector) {
+            sqlQuery = getSqlQuerySearchByDirector();
+        } else if (searchByTitle) {
+            sqlQuery = getSqlQuerySearchByTitle();
+        }
+
+        if (searchByDirector && searchByTitle) {
+            films = jdbcTemplate.query(sqlQuery, Mapper::mapRowToFilm, query, query);
+        } else {
+            films = jdbcTemplate.query(sqlQuery, Mapper::mapRowToFilm, query);
+        }
+
+        fillFilmsInfo(films);
+
+        return films;
+    }
+
+    private String getSqlQuerySearchByTitle() {
+        return "SELECT f.id,\n" +
+                "\tf.name,\n" +
+                "\tf.description,\n" +
+                "\tf.release_date,\n" +
+                "\tf.duration,\n" +
+                "\tr.rating\n" +
+                "FROM films AS f\n" +
+                "JOIN mpas AS r ON f.rating_id = r.id\n" +
+                "WHERE UPPER(f.name) LIKE UPPER(?)\n" +
+                "ORDER BY f.id;";
+    }
+
+    private String getSqlQuerySearchByDirector() {
+        return "SELECT f.id,\n" +
+                "\tf.name,\n" +
+                "\tf.description,\n" +
+                "\tf.release_date,\n" +
+                "\tf.duration,\n" +
+                "\tr.rating\n" +
+                "FROM films AS f\n" +
+                "JOIN mpas AS r ON f.rating_id = r.id\n" +
+                "WHERE f.id IN (SELECT fd.film_id\n" +
+                "\tFROM film_directors AS fd\n" +
+                "\tJOIN directors AS d ON d.id = fd.director_id\n" +
+                "\tWHERE UPPER(d.name) LIKE UPPER(?))\n" +
+                "ORDER BY f.id;";
+    }
+
+    private String getSqlQuerySearchByDirectorAndTitle() {
+        return "SELECT f.id,\n" +
+                "\tf.name,\n" +
+                "\tf.description,\n" +
+                "\tf.release_date,\n" +
+                "\tf.duration,\n" +
+                "\tr.rating\n" +
+                "FROM films AS f\n" +
+                "JOIN mpas AS r ON f.rating_id = r.id\n" +
+                "WHERE f.id IN (SELECT fd.film_id\n" +
+                "\tFROM film_directors AS fd\n" +
+                "\tJOIN directors AS d ON d.id = fd.director_id\n" +
+                "\tWHERE UPPER(d.name) LIKE UPPER(?)) OR UPPER(f.name) LIKE UPPER(?)\n" +
+                "ORDER BY f.id;";
     }
 
     private void addFilmGenres(Film film) {
