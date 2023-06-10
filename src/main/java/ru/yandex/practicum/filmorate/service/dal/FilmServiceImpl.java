@@ -68,38 +68,14 @@ public class FilmServiceImpl implements FilmService {
     public List<Film> getPopulated(Integer filmsCount, Integer genreId, Integer year) {
         final int DEFAULT_FILMS_COUNT = 10;
         int maxFilms = filmsCount != null ? filmsCount : DEFAULT_FILMS_COUNT;
-        List<Film> films = filmStorage.getAllFilms();
+        Genre genre = genreId != null ? genreStorage.getGenre(genreId) : null;
 
-        if (genreId == null && year == null) {
-            return films.stream()
-                    .sorted((f1, f2) -> f2.getUsersLikes().size() - f1.getUsersLikes().size())
-                    .limit(maxFilms)
-                    .collect(Collectors.toList());
-
-        } else if (genreId != null && year == null) {
-            Genre genre = genreStorage.getGenre(genreId);
-            return films.stream()
-                    .filter(f -> f.getGenres().contains(genre))
-                    .sorted((f1, f2) -> f2.getUsersLikes().size() - f1.getUsersLikes().size())
-                    .limit(maxFilms)
-                    .collect(Collectors.toList());
-
-        } else if (genreId == null && year != null) {
-            return films.stream()
-                    .filter(f -> year.equals(f.getReleaseDate().getYear()))
-                    .sorted((f1, f2) -> f2.getUsersLikes().size() - f1.getUsersLikes().size())
-                    .limit(maxFilms)
-                    .collect(Collectors.toList());
-
-        } else {
-            Genre genre = genreStorage.getGenre(genreId);
-            return films.stream()
-                    .filter(f -> f.getGenres().contains(genre))
-                    .filter(f -> year.equals(f.getReleaseDate().getYear()))
-                    .sorted((f1, f2) -> f2.getUsersLikes().size() - f1.getUsersLikes().size())
-                    .limit(maxFilms)
-                    .collect(Collectors.toList());
-        }
+        return filmStorage.getAllFilms().stream()
+                .filter(f -> genre == null || f.getGenres().contains(genre))
+                .filter(f -> year  == null || year.equals(f.getReleaseDate().getYear()))
+                .sorted((f1, f2) -> f2.getUsersLikes().size() - f1.getUsersLikes().size())
+                .limit(maxFilms)
+                .collect(Collectors.toList());
     }
 
     @Override
