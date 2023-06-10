@@ -166,6 +166,33 @@ public class FilmDao implements FilmStorage {
         return films;
     }
 
+    @Override
+    @Transactional
+    public List<Film> commonAndPopularFilm(long userId, long friendId) {
+        String sqlQuery = "SELECT *\n" +
+                "FROM films AS f\n" +
+                "JOIN mpas AS r ON f.rating_id = r.id\n" +
+                "WHERE f.id IN\n" +
+                "(SELECT film_id\n" +
+                "FROM film_users_likes AS ful\n" +
+                "WHERE user_id = ?\n" +
+                "GROUP BY film_id\n" +
+                "ORDER BY COUNT(user_id))\n" +
+                "INTERSECT\n" +
+                "SELECT *\n" +
+                "FROM films AS f\n" +
+                "JOIN mpas AS r ON f.rating_id = r.id\n" +
+                "WHERE f.id IN\n" +
+                "(SELECT film_id\n" +
+                "FROM film_users_likes\n" +
+                "WHERE user_id = ?)\n";
+
+        List<Film> films = jdbcTemplate.query(sqlQuery, Mapper::mapRowToFilm, userId, friendId);
+        fillFilmsInfo(films);
+
+        return films;
+    }
+
     private void fillFilmsInfo(List<Film> films) {
         Map<Long, Film> filmsMap = films.stream()
                 .collect(Collectors.toMap(Film::getId, Function.identity()));

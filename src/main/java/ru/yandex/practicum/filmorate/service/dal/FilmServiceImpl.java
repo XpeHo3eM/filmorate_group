@@ -132,6 +132,11 @@ public class FilmServiceImpl implements FilmService {
     }
 
     @Override
+    public List<Film> commonAndPopularFilm(Long userId, Long friendId) {
+        return filmStorage.commonAndPopularFilm(userId, friendId);
+    }
+
+    @Override
     public List<Film> searchFilm(String query, List<String> searchBy) {
         FilmSearchValidator.validate(searchBy);
 
