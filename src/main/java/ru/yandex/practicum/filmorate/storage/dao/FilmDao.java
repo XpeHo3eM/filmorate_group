@@ -199,14 +199,7 @@ public class FilmDao implements FilmStorage {
         String sqlQuery = "DELETE\n" +
                 "FROM films\n" +
                 "WHERE id = ?;";
-        int count = jdbcTemplate.update(sqlQuery, filmId);
-        if (count > 0) {
-            removeFilmGenres(filmId);
-            removeFilmUsersLikes(filmId);
-            removeFilmDirectors(filmId);
-        }
-
-        return count;
+        return jdbcTemplate.update(sqlQuery, filmId);
     }
 
     private void fillFilmsInfo(List<Film> films) {
@@ -333,13 +326,6 @@ public class FilmDao implements FilmStorage {
         });
     }
 
-    private void removeFilmGenres(long filmId) {
-        String sqlQuery = "DELETE\n" +
-                "FROM film_genres\n" +
-                "WHERE film_id = ?;";
-        jdbcTemplate.update(sqlQuery, filmId);
-    }
-
     private void addFilmUsersLikes(Film film) {
         String sqlQuery = "INSERT INTO film_users_likes (film_id, user_id)\n" +
                 "VALUES(?, ?);";
@@ -357,13 +343,6 @@ public class FilmDao implements FilmStorage {
                 return likes.size();
             }
         });
-    }
-
-    private void removeFilmUsersLikes(long filmId) {
-        String sqlQuery = "DELETE\n" +
-                "FROM film_users_likes\n" +
-                "WHERE film_id = ?;";
-        jdbcTemplate.update(sqlQuery, filmId);
     }
 
     private void addFilmDirectors(Film film) {
@@ -384,13 +363,6 @@ public class FilmDao implements FilmStorage {
                 return directors.size();
             }
         });
-    }
-
-    private void removeFilmDirectors(long filmId) {
-        String sqlQuery = "DELETE\n" +
-                "FROM film_directors\n" +
-                "WHERE film_id = ?;";
-        jdbcTemplate.update(sqlQuery, filmId);
     }
 
     private void updateFilmsTable(Film film) {
