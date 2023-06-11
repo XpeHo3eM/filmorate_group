@@ -1,6 +1,6 @@
 package ru.yandex.practicum.filmorate.model;
 
-public enum EnumStatusLike {
+public enum ReviewStatusLike {
     LIKE,
     DISLIKE,
     EMPTY

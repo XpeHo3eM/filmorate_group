@@ -8,7 +8,7 @@ import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import ru.yandex.practicum.filmorate.exception.entity.EntityAlreadyExistsException;
-import ru.yandex.practicum.filmorate.model.EnumStatusLike;
+import ru.yandex.practicum.filmorate.model.ReviewStatusLike;
 import ru.yandex.practicum.filmorate.model.Review;
 import ru.yandex.practicum.filmorate.storage.ReviewStorage;
 import ru.yandex.practicum.filmorate.util.Mapper;
@@ -97,7 +97,7 @@ public class ReviewDao implements ReviewStorage {
     @Transactional
     public boolean addLikeReview(long reviewId, long userId) {
         try {
-            EnumStatusLike currentStatusLike = getLikeOrDislike(reviewId, userId);
+            ReviewStatusLike currentStatusLike = getLikeOrDislike(reviewId, userId);
 
             switch (currentStatusLike) {
                 case LIKE:
@@ -128,9 +128,9 @@ public class ReviewDao implements ReviewStorage {
         try {
             removeLikeOrDislike(reviewId, userId);
 
-            EnumStatusLike currentStatusLike = getLikeOrDislike(reviewId, userId);
+            ReviewStatusLike currentStatusLike = getLikeOrDislike(reviewId, userId);
 
-            if (currentStatusLike.equals(EnumStatusLike.LIKE)) {
+            if (currentStatusLike.equals(ReviewStatusLike.LIKE)) {
                 return true;
             }
 
@@ -145,7 +145,7 @@ public class ReviewDao implements ReviewStorage {
     @Transactional
     public boolean addDislikeReview(long reviewId, long userId) {
         try {
-            EnumStatusLike currentStatusLike = getLikeOrDislike(reviewId, userId);
+            ReviewStatusLike currentStatusLike = getLikeOrDislike(reviewId, userId);
 
             switch (currentStatusLike) {
                 case LIKE:
@@ -177,9 +177,9 @@ public class ReviewDao implements ReviewStorage {
         try {
             removeLikeOrDislike(reviewId, userId);
 
-            EnumStatusLike currentStatusLike = getLikeOrDislike(reviewId, userId);
+            ReviewStatusLike currentStatusLike = getLikeOrDislike(reviewId, userId);
 
-            if (currentStatusLike.equals(EnumStatusLike.DISLIKE)) {
+            if (currentStatusLike.equals(ReviewStatusLike.DISLIKE)) {
                 return true;
             }
 
@@ -269,7 +269,7 @@ public class ReviewDao implements ReviewStorage {
         jdbcTemplate.update(sqlQuery, reviewId, userId);
     }
 
-    private EnumStatusLike getLikeOrDislike(long reviewId, long userId) {
+    private ReviewStatusLike getLikeOrDislike(long reviewId, long userId) {
         String sqlQuery = "SELECT is_positive\n" +
                 "FROM film_reviews_likes\n" +
                 "WHERE review_id = ?\n" +
@@ -278,13 +278,13 @@ public class ReviewDao implements ReviewStorage {
         List<Boolean> getQueryString = jdbcTemplate.queryForList(sqlQuery, Boolean.class, reviewId, userId);
 
         if (getQueryString.isEmpty()) {
-            return EnumStatusLike.EMPTY;
+            return ReviewStatusLike.EMPTY;
         }
 
         if (getQueryString.get(0)) {
-            return EnumStatusLike.LIKE;
+            return ReviewStatusLike.LIKE;
         } else {
-            return EnumStatusLike.DISLIKE;
+            return ReviewStatusLike.DISLIKE;
         }
     }
 }
