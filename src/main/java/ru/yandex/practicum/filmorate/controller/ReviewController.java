@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Review;
+import ru.yandex.practicum.filmorate.service.FeedService;
 import ru.yandex.practicum.filmorate.service.ReviewService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -17,14 +18,17 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ReviewController {
     private final ReviewService service;
+    private final FeedService feedService;
 
     @PostMapping
     @ResponseStatus(HttpStatus.OK)
     public Review addReview(@Valid @RequestBody Review review,
                             HttpServletRequest request) {
         log.debug("On URL [{}] used method [{}]", request.getRequestURL(), request.getMethod());
+        Review reviewAdd = service.addReview(review);
+        feedService.createFeed(reviewAdd.getUserId(), reviewAdd.getReviewId(), "REVIEW", "ADD");
 
-        return service.addReview(review);
+        return reviewAdd;
     }
 
     @PutMapping
@@ -32,8 +36,10 @@ public class ReviewController {
     public Review updateReview(@Valid @RequestBody Review review,
                                HttpServletRequest request) {
         log.debug("On URL [{}] used method [{}]", request.getRequestURL(), request.getMethod());
+        Review reviewUpdate = service.updateReview(review);
+        feedService.createFeed(reviewUpdate.getUserId(), reviewUpdate.getReviewId(), "REVIEW", "UPDATE");
 
-        return service.updateReview(review);
+        return reviewUpdate;
     }
 
     @GetMapping("/{reviewId}")
@@ -50,6 +56,8 @@ public class ReviewController {
     public void removeReview(@PathVariable("reviewId") long reviewId,
                              HttpServletRequest request) {
         log.debug("On URL [{}] used method [{}]", request.getRequestURL(), request.getMethod());
+        Review review = service.findReviewById(reviewId);
+        feedService.createFeed(review.getUserId(), review.getReviewId(), "REVIEW", "REMOVE");
 
         service.removeReview(reviewId);
     }
