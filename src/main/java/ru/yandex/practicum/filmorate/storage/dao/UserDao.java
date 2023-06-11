@@ -82,6 +82,15 @@ public class UserDao implements UserStorage {
 
     @Override
     @Transactional
+    public int removeUser(long userId) {
+        String sqlQuery = "DELETE\n" +
+                "FROM users\n" +
+                "WHERE id = ?;";
+        return jdbcTemplate.update(sqlQuery, userId);
+    }
+
+    @Override
+    @Transactional
     public List<User> getFriends(Long id) {
         String sqlQuery = "SELECT u.id AS id,\n" +
                 "\tu.name AS name,\n" +

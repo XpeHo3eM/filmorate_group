@@ -193,6 +193,15 @@ public class FilmDao implements FilmStorage {
         return films;
     }
 
+    @Override
+    @Transactional
+    public int removeFilm(long filmId) {
+        String sqlQuery = "DELETE\n" +
+                "FROM films\n" +
+                "WHERE id = ?;";
+        return jdbcTemplate.update(sqlQuery, filmId);
+    }
+
     private void fillFilmsInfo(List<Film> films) {
         Map<Long, Film> filmsMap = films.stream()
                 .collect(Collectors.toMap(Film::getId, Function.identity()));

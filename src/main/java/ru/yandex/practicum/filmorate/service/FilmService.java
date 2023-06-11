@@ -24,4 +24,6 @@ public interface FilmService {
     List<Film> commonAndPopularFilm(Long userId, Long friendId);
 
     List<Film> searchFilm(String query, List<String> searchBy);
+
+    void removeFilmById(long id);
 }
