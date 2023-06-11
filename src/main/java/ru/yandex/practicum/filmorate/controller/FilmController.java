@@ -72,4 +72,9 @@ public class FilmController {
     public List<Film> searchFilm(@RequestParam String query, @RequestParam("by") Optional<List<String>> searchBy) {
         return service.searchFilm(query, searchBy.orElse(new ArrayList<>()));
     }
+
+    @DeleteMapping("/{id}")
+    public void deleteFilm(@PathVariable long id) {
+        service.removeFilmById(id);
+    }
 }

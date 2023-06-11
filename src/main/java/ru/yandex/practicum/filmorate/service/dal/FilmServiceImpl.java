@@ -153,6 +153,14 @@ public class FilmServiceImpl implements FilmService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public void removeFilmById(long filmId) {
+        if (filmStorage.removeFilm(filmId) == 0) {
+            throw new EntityNotFoundException(String.format("Фильм с ID = %s не найден", filmId));
+        }
+    }
+
+
     private User getUserOrThrowException(Long id) {
         User userOnDb = userStorage.getUserById(id);
 

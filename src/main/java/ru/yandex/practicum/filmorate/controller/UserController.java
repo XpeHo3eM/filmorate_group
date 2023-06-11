@@ -74,4 +74,9 @@ public class UserController {
 
         return recommendationsService.getRecommended(id);
     }
+
+    @DeleteMapping("/{userId}")
+    public void deleteFromFriends(@PathVariable long userId) {
+        service.removeUserById(userId);
+    }
 }

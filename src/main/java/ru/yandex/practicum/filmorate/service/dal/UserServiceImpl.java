@@ -97,6 +97,13 @@ public class UserServiceImpl implements UserService {
         return storage.getAllUsers();
     }
 
+    @Override
+    public void removeUserById(long userId) {
+        if (storage.removeUser(userId) == 0) {
+            throw new EntityNotFoundException(String.format("Пользователь с ID = %s не найден", userId));
+        }
+    }
+
     private User getUserOrThrowException(Long id) {
         User userOnDb = storage.getUserById(id);
 

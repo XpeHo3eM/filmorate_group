@@ -22,4 +22,6 @@ public interface UserStorage {
     Long getLikesCount(Long id);
 
     Long getUserIdWithMostCommonLikes(Long id);
+
+    int removeUser(long userId);
 }

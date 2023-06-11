@@ -82,6 +82,21 @@ public class UserDao implements UserStorage {
 
     @Override
     @Transactional
+    public int removeUser(long userId) {
+        String sqlQuery = "DELETE\n" +
+                "FROM users\n" +
+                "WHERE id = ?;";
+        int count = jdbcTemplate.update(sqlQuery, userId);
+        if (count > 0) {
+            removeFriendsById(userId);
+            removeLikes(userId);
+        }
+
+        return count;
+    }
+
+    @Override
+    @Transactional
     public List<User> getFriends(Long id) {
         String sqlQuery = "SELECT u.id AS id,\n" +
                 "\tu.name AS name,\n" +
@@ -150,5 +165,20 @@ public class UserDao implements UserStorage {
         } catch (DataAccessException ignore) {
             return null;
         }
+    }
+
+    private void removeFriendsById(long userId) {
+        String sqlQuery = "DELETE\n" +
+                "FROM user_friends\n" +
+                "WHERE user_id = ?\n" +
+                "\tOR friend_id = ?;";
+        jdbcTemplate.update(sqlQuery, userId, userId);
+    }
+
+    private void removeLikes(long userId) {
+        String sqlQuery = "DELETE\n" +
+                "FROM film_users_likes\n" +
+                "WHERE user_id = ?;";
+        jdbcTemplate.update(sqlQuery, userId);
     }
 }
