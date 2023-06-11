@@ -95,20 +95,15 @@ public class ReviewController {
     }
 
     @GetMapping
-    public List<Review> getReviews(@RequestParam(defaultValue = "10", required = false) int count,
+    @ResponseStatus(HttpStatus.OK)
+    public List<Review> getReviews(@RequestParam(defaultValue = "0", required = false) long filmId,
+                                   @RequestParam(defaultValue = "10", required = false) int count,
                                    HttpServletRequest request) {
         log.debug("On URL [{}] used method [{}]", request.getRequestURL(), request.getMethod());
-
-        return service.getReviews(count);
-    }
-
-    @GetMapping("/{filmId}")
-    @ResponseStatus(HttpStatus.OK)
-    public List<Review> getReviewsByFilm(@PathVariable("filmId") long filmId,
-                                         @RequestParam(defaultValue = "10", required = false) int count,
-                                         HttpServletRequest request) {
-        log.debug("On URL [{}] used method [{}]", request.getRequestURL(), request.getMethod());
-
-        return service.getReviewsByFilm(filmId, count);
+        if (filmId > 0) {
+            return service.getReviewsByFilm(filmId, count);
+        } else {
+            return service.getReviews(count);
+        }
     }
 }

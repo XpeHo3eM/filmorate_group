@@ -74,9 +74,9 @@ public class Mapper {
 
     public static final Map<String, Object> reviewToMap(Review review) {
         return new HashMap<>() {{
-            put("reviewId", review.getReviewId());
+            put("review_id", review.getReviewId());
             put("content", review.getContent());
-            put("is_positive", review.isPositive());
+            put("is_positive", review.getIsPositive());
             put("user_id", review.getUserId());
             put("film_id", review.getFilmId());
         }};
@@ -84,7 +84,7 @@ public class Mapper {
 
     public static final Review mapRowToReview(ResultSet rs, int rowNum) throws SQLException {
         return Review.builder()
-                .reviewId(rs.getLong("reviewId"))
+                .reviewId(rs.getLong("review_id"))
                 .content(rs.getString("content"))
                 .isPositive(rs.getBoolean("is_positive"))
                 .userId(rs.getLong("user_id"))
