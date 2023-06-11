@@ -5,6 +5,7 @@ import ru.yandex.practicum.filmorate.storage.dao.MpaDao;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -98,5 +99,26 @@ public class Mapper {
             put("id", director.getId());
             put("name", director.getName());
         }};
+    }
+
+    public static final Map<String, Object> feedToMap(Long userId, Long entityId, String eventType, String operation) {
+        return new HashMap<>() {{
+            put("time_stamp", Instant.now());
+            put("user_id", userId);
+            put("event_type", eventType);
+            put("operation", operation);
+            put("entity_id", entityId);
+        }};
+    }
+
+    public static final Feed mapRowToFeed(ResultSet resultSet, int rowNum) throws SQLException {
+        return Feed.builder()
+                .eventId(resultSet.getLong("event_id"))
+                .timestamp(resultSet.getTimestamp("time_stamp").getTime())
+                .userId(resultSet.getLong("user_id"))
+                .eventType(resultSet.getString("event_type"))
+                .operation(resultSet.getString("operation"))
+                .entityId(resultSet.getLong("entity_id"))
+                .build();
     }
 }
