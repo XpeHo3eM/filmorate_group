@@ -48,7 +48,7 @@ public class FilmController {
     @ResponseStatus(HttpStatus.OK)
     public void addLike(@PathVariable long id, @PathVariable long userId) {
         service.addLike(id, userId);
-        feedService.createFeed( userId, id,  "LIKE", "ADD");
+        feedService.createFeed(userId, id, "LIKE", "ADD");
     }
 
     @DeleteMapping("/{id}/like/{userId}")
