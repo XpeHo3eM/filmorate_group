@@ -1,33 +1,27 @@
 package ru.yandex.practicum.filmorate.model;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NonNull;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Positive;
 
-@AllArgsConstructor
-@Builder
 @Data
+@Builder
 public class Review {
-    private final long reviewId;
+    private long reviewId;
 
-    @NotNull
     @NotBlank(message = "content can't be blank")
-    private final String content;
+    private String content;
 
-    @NotNull
-    private final boolean isPositive;
+    @NonNull
+    private Boolean isPositive;
 
-    @NotNull
-    @Positive
-    private final long userId;
+    @NonNull
+    private Long userId;
 
-    @NotNull
-    @Positive
-    private final long filmId;
+    @NonNull
+    private Long filmId;
 
-    private final long useful;
+    private long useful;
 }

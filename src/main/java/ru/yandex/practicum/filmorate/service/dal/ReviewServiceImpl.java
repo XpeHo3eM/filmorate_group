@@ -31,7 +31,7 @@ public class ReviewServiceImpl implements ReviewService {
         Optional<Review> newReview = reviewStorage.addReview(review);
 
         if (newReview.isPresent()) {
-            log.debug("Создан новый отзыв: [{}]", review);
+            log.debug("Создан новый отзыв: [{}]", newReview.get());
         } else {
             throw new ReviewNotCreatedException(String.format("Новый отзыв не добавлен: [%s]", review));
         }
@@ -47,14 +47,14 @@ public class ReviewServiceImpl implements ReviewService {
 
         if (review.equals(checkFoundReview)) {
             log.debug("Новых данных для обновления отзыва не найдено: \n" +
-                    "Данные из контроллера: \n[Review={}], Данные из БД: \n[Review={}]", review, checkFoundReview);
+                    "Данные из контроллера: \n[Review={}], \nДанные из БД: \n[Review={}]", review, checkFoundReview);
             return review;
         }
         Optional<Review> updateReview = reviewStorage.updateReview(review);
 
         if (updateReview.isPresent()) {
-            log.debug("Обновлен отзыв. Данные до обновления: \n[Review={}], Данные после обновления: \n[Review={}]",
-                    review, updateReview);
+            log.debug("Обновлен отзыв. Данные из контроллера: \n[Review={}], \nДанные после обновления: \n[Review={}]",
+                    review, updateReview.get());
         } else {
             throw new ReviewNotUpdatedException(String.format("Отзыв не обновлен: [%s]", review));
         }
@@ -67,7 +67,7 @@ public class ReviewServiceImpl implements ReviewService {
         Optional<Review> findReview = reviewStorage.findReviewById(reviewId);
 
         if (findReview.isPresent()) {
-            log.debug("Найден Отзыв: [{}]", findReview);
+            log.debug("Найден Отзыв: [{}]", findReview.get());
         } else {
             throw new EntityNotFoundException(String.format("Отзыв с [id = %d] не найден", reviewId));
         }
