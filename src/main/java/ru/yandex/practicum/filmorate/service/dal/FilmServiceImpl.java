@@ -72,7 +72,7 @@ public class FilmServiceImpl implements FilmService {
 
         return filmStorage.getAllFilms().stream()
                 .filter(f -> genre == null || f.getGenres().contains(genre))
-                .filter(f -> year  == null || year.equals(f.getReleaseDate().getYear()))
+                .filter(f -> year == null || year.equals(f.getReleaseDate().getYear()))
                 .sorted((f1, f2) -> f2.getUsersLikes().size() - f1.getUsersLikes().size())
                 .limit(maxFilms)
                 .collect(Collectors.toList());

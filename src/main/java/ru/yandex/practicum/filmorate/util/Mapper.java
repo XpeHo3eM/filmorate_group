@@ -9,6 +9,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Mapper {
+    private Mapper() {
+    }
+
     public static final User mapRowToUser(ResultSet rs, int rowNum) throws SQLException {
         return User.builder()
                 .id(rs.getLong("id"))
@@ -67,6 +70,27 @@ public class Mapper {
             put("duration", film.getDuration());
             put("rating_id", film.getMpa().getId());
         }};
+    }
+
+    public static final Map<String, Object> reviewToMap(Review review) {
+        return new HashMap<>() {{
+            put("review_id", review.getReviewId());
+            put("content", review.getContent());
+            put("is_positive", review.getIsPositive());
+            put("user_id", review.getUserId());
+            put("film_id", review.getFilmId());
+        }};
+    }
+
+    public static final Review mapRowToReview(ResultSet rs, int rowNum) throws SQLException {
+        return Review.builder()
+                .reviewId(rs.getLong("review_id"))
+                .content(rs.getString("content"))
+                .isPositive(rs.getBoolean("is_positive"))
+                .userId(rs.getLong("user_id"))
+                .filmId(rs.getLong("film_id"))
+                .useful(rs.getLong("useful"))
+                .build();
     }
 
     public static final Map<String, Object> directorToMap(Director director) {
