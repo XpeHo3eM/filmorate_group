@@ -9,19 +9,19 @@ import javax.validation.constraints.NotBlank;
 @Data
 @Builder
 public class Review {
-    private long reviewId;
+    private final long reviewId;
 
     @NotBlank(message = "content can't be blank")
-    private String content;
+    private final String content;
 
     @NonNull
-    private Boolean isPositive;
+    private final Boolean isPositive;
 
     @NonNull
-    private Long userId;
+    private final Long userId;
 
     @NonNull
-    private Long filmId;
+    private final Long filmId;
 
-    private long useful;
+    private final long useful;
 }
