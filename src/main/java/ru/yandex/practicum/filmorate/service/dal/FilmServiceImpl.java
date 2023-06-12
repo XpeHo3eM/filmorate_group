@@ -3,8 +3,6 @@ package ru.yandex.practicum.filmorate.service.dal;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.entity.EntityAlreadyExistsException;
 import ru.yandex.practicum.filmorate.exception.entity.EntityNotFoundException;
-import ru.yandex.practicum.filmorate.exception.film.FilmAlreadyLikedException;
-import ru.yandex.practicum.filmorate.exception.film.FilmNotLikedException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.User;
@@ -39,11 +37,9 @@ public class FilmServiceImpl implements FilmService {
         Set<Long> likes = film.getUsersLikes();
 
         if (likes.contains(userId)) {
-            throw new FilmAlreadyLikedException(String.format("%s уже лайкал \"%s\"", user.getName(), film.getName()));
+            likes.add(userId);
+            filmStorage.updateFilm(film);
         }
-
-        likes.add(userId);
-        filmStorage.updateFilm(film);
 
         return film;
     }
@@ -55,11 +51,9 @@ public class FilmServiceImpl implements FilmService {
         Set<Long> likes = film.getUsersLikes();
 
         if (!likes.contains(userId)) {
-            throw new FilmNotLikedException(String.format("%s еще не лайкал \"%s\"", user.getName(), film.getName()));
+            likes.remove(userId);
+            filmStorage.updateFilm(film);
         }
-
-        likes.remove(userId);
-        filmStorage.updateFilm(film);
 
         return film;
     }
