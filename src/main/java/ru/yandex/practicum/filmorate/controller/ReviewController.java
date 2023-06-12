@@ -57,9 +57,10 @@ public class ReviewController {
                              HttpServletRequest request) {
         log.debug("On URL [{}] used method [{}]", request.getRequestURL(), request.getMethod());
         Review review = service.findReviewById(reviewId);
-        feedService.createFeed(review.getUserId(), review.getReviewId(), "REVIEW", "REMOVE");
 
         service.removeReview(reviewId);
+
+        feedService.createFeed(review.getUserId(), review.getReviewId(), "REVIEW", "REMOVE");
     }
 
     @PutMapping("/{reviewId}/like/{userId}")

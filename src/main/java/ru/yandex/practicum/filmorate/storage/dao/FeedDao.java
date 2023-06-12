@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Component;
-import ru.yandex.practicum.filmorate.model.Feed;
+import ru.yandex.practicum.filmorate.model.FeedEvent;
 import ru.yandex.practicum.filmorate.storage.FeedStorage;
 import ru.yandex.practicum.filmorate.util.Mapper;
 
@@ -28,7 +28,7 @@ public class FeedDao implements FeedStorage {
     }
 
     @Override
-    public List<Feed> getFeedId(Long userId) {
+    public List<FeedEvent> getFeedByUserId(Long userId) {
         String sqlQuery = "SELECT *\n" +
                 "FROM feeds\n" +
                 "WHERE user_id = ?";

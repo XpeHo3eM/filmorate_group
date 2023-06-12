@@ -3,7 +3,7 @@ package ru.yandex.practicum.filmorate.controller;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.entity.EntityNotFoundException;
-import ru.yandex.practicum.filmorate.model.Feed;
+import ru.yandex.practicum.filmorate.model.FeedEvent;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.FeedService;
@@ -87,7 +87,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}/feed")
-    public List<Feed> getAllFeed(@PathVariable long id) {
-        return feedService.getFeedId(id);
+    public List<FeedEvent> getAllFeed(@PathVariable long id) {
+        return feedService.getFeedByUserId(id);
     }
 }

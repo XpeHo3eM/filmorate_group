@@ -111,8 +111,8 @@ public class Mapper {
         }};
     }
 
-    public static final Feed mapRowToFeed(ResultSet resultSet, int rowNum) throws SQLException {
-        return Feed.builder()
+    public static final FeedEvent mapRowToFeed(ResultSet resultSet, int rowNum) throws SQLException {
+        return FeedEvent.builder()
                 .eventId(resultSet.getLong("event_id"))
                 .timestamp(resultSet.getTimestamp("time_stamp").getTime())
                 .userId(resultSet.getLong("user_id"))

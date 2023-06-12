@@ -8,7 +8,7 @@ import javax.validation.constraints.PastOrPresent;
 
 @Data
 @Builder
-public class Feed {
+public class FeedEvent {
     @PastOrPresent
     @NonNull
     private Long timestamp;
