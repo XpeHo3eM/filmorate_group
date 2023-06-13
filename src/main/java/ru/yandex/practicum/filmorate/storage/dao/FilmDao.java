@@ -114,7 +114,7 @@ public class FilmDao implements FilmStorage {
         addFilmUsersLikes(film);
         addFilmDirectors(film);
 
-        return getFilmById(filmId);
+        return film;
     }
 
     @Override
@@ -134,7 +134,7 @@ public class FilmDao implements FilmStorage {
         updateFilmLikes(film);
         updateFilmDirectors(film);
 
-        return getFilmById(film.getId());
+        return film;
     }
 
 
@@ -189,6 +189,7 @@ public class FilmDao implements FilmStorage {
         String sqlQuery = "DELETE\n" +
                 "FROM films\n" +
                 "WHERE id = ?;";
+
         return jdbcTemplate.update(sqlQuery, filmId);
     }
 
