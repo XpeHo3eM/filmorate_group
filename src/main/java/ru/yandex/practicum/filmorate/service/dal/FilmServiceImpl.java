@@ -36,7 +36,7 @@ public class FilmServiceImpl implements FilmService {
         Film film = getFilmOrThrowException(filmId);
         Set<Long> likes = film.getUsersLikes();
 
-        if (likes.contains(userId)) {
+        if (!likes.contains(userId)) {
             likes.add(userId);
             filmStorage.updateFilm(film);
         }
@@ -50,7 +50,7 @@ public class FilmServiceImpl implements FilmService {
         Film film = getFilmOrThrowException(filmId);
         Set<Long> likes = film.getUsersLikes();
 
-        if (!likes.contains(userId)) {
+        if (likes.contains(userId)) {
             likes.remove(userId);
             filmStorage.updateFilm(film);
         }
