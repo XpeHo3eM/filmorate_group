@@ -25,6 +25,7 @@ public class ReviewController {
     public Review addReview(@Valid @RequestBody Review review,
                             HttpServletRequest request) {
         log.debug("On URL [{}] used method [{}]", request.getRequestURL(), request.getMethod());
+
         Review reviewAdd = service.addReview(review);
         feedService.createFeed(reviewAdd.getUserId(), reviewAdd.getReviewId(), "REVIEW", "ADD");
 
@@ -36,6 +37,7 @@ public class ReviewController {
     public Review updateReview(@Valid @RequestBody Review review,
                                HttpServletRequest request) {
         log.debug("On URL [{}] used method [{}]", request.getRequestURL(), request.getMethod());
+
         Review reviewUpdate = service.updateReview(review);
         feedService.createFeed(reviewUpdate.getUserId(), reviewUpdate.getReviewId(), "REVIEW", "UPDATE");
 
@@ -56,6 +58,7 @@ public class ReviewController {
     public void removeReview(@PathVariable("reviewId") long reviewId,
                              HttpServletRequest request) {
         log.debug("On URL [{}] used method [{}]", request.getRequestURL(), request.getMethod());
+
         Review review = service.findReviewById(reviewId);
 
         service.removeReview(reviewId);
