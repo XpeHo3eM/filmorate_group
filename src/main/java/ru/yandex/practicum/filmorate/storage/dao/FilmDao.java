@@ -169,23 +169,19 @@ public class FilmDao implements FilmStorage {
     @Override
     @Transactional
     public List<Film> commonAndPopularFilm(long userId, long friendId) {
-        String sqlQuery = "SELECT *\n" +
-                "FROM films AS f\n" +
-                "JOIN mpas AS r ON f.rating_id = r.id\n" +
-                "WHERE f.id IN\n" +
-                "(SELECT film_id\n" +
-                "FROM film_users_likes AS ful\n" +
-                "WHERE user_id = ?\n" +
-                "GROUP BY film_id\n" +
-                "ORDER BY COUNT(user_id))\n" +
-                "INTERSECT\n" +
-                "SELECT *\n" +
-                "FROM films AS f\n" +
-                "JOIN mpas AS r ON f.rating_id = r.id\n" +
-                "WHERE f.id IN\n" +
-                "(SELECT film_id\n" +
-                "FROM film_users_likes\n" +
-                "WHERE user_id = ?)\n";
+        String sqlQuery = "SELECT f.id,\n" +
+                "\tf.name,\n" +
+                "\tf.description,\n" +
+                "\tf.release_date,\n" +
+                "\tf.duration,\n" +
+                "\tr.rating\n" +
+                "FROM film_users_likes AS fl\n" +
+                "LEFT JOIN films AS f ON fl.film_id = f.id\n" +
+                "LEFT JOIN mpas AS r ON f.rating_id = r.id\n" +
+                "WHERE fl.user_id IN (?,?)\n" +
+                "GROUP BY fl.film_id\n" +
+                "HAVING (COUNT(fl.film_id) > 1)\n" +
+                "ORDER BY f.id;";
 
         List<Film> films = jdbcTemplate.query(sqlQuery, Mapper::mapRowToFilm, userId, friendId);
         fillFilmsInfo(films);
