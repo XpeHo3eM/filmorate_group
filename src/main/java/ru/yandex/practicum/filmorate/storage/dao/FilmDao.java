@@ -141,25 +141,19 @@ public class FilmDao implements FilmStorage {
     @Override
     public List<Film> getRecommendations(Long forUserId, Long fromUserId) {
         String sqlQuery = "SELECT f.id,\n" +
-                "\tf.name,\n" +
-                "\tf.description,\n" +
-                "\tf.release_date,\n" +
-                "\tf.duration,\n" +
-                "\tr.rating\n" +
+                "       \tf.name,\n" +
+                "       \tf.description,\n" +
+                "       \tf.release_date,\n" +
+                "       \tf.duration,\n" +
+                "       \tr.rating\n" +
                 "FROM films AS f\n" +
                 "JOIN mpas AS r ON f.rating_id = r.id\n" +
-                "WHERE f.id in (" +
-                "SELECT film_id "
-                + "FROM film_users_likes "
-                + "WHERE user_id = ? "
-                + "AND film_id not in ( "
-                + "    SELECT film_id "
-                + "    FROM film_users_likes "
-                + "    WHERE user_id = ? "
-                + ")) " +
-                "ORDER BY f.id;";
+                "LEFT JOIN film_users_likes AS u1 ON f.id = u1.film_id AND u1.user_id = ?\n" +
+                "LEFT JOIN film_users_likes AS u2 ON f.id = u2.film_id AND u2.user_id = ?\n" +
+                "WHERE u1.film_id IS NULL AND u2.film_id IS NOT NULL\n" +
+                "ORDER BY f.id;\n";
 
-        List<Film> films = jdbcTemplate.query(sqlQuery, Mapper::mapRowToFilm, fromUserId, forUserId);
+        List<Film> films = jdbcTemplate.query(sqlQuery, Mapper::mapRowToFilm, forUserId, fromUserId);
 
         fillFilmsInfo(films);
 
