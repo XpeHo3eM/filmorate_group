@@ -104,12 +104,6 @@ public class UserController {
                                      HttpServletRequest request) {
         log.debug("On URL [{}] used method [{}]", request.getRequestURL(), request.getMethod());
 
-        User user = service.getUserById(id);
-
-        if (user == null) {
-            throw new EntityNotFoundException("Пользователь не найден.");
-        }
-
         return recommendationsService.getRecommended(id);
     }
 

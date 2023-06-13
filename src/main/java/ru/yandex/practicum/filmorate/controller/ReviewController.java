@@ -108,14 +108,13 @@ public class ReviewController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<Review> getReviews(@RequestParam(defaultValue = "0", required = false) long filmId,
+    public List<Review> getReviews(@RequestParam(required = false) Long filmId,
                                    @RequestParam(defaultValue = "10", required = false) int count,
                                    HttpServletRequest request) {
         log.debug("On URL [{}] used method [{}]", request.getRequestURL(), request.getMethod());
-        if (filmId > 0) {
-            return service.getReviewsByFilm(filmId, count);
-        } else {
-            return service.getReviews(count);
-        }
+
+        return (filmId != null)
+                ? service.getReviewsByFilm(filmId, count)
+                : service.getReviews(count);
     }
 }
